@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+            text-decoration: none;
+            color: black;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            padding-top: 10px;
+            overflow-x: hidden;
+        }
+
+        main {
+            max-width: 1280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0 auto;
+        }
+
+        main ul {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1rem;
+            width: auto;
+        }
+
+        main ul li .card {
+            width: 340px;
+            height: 220px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .card_image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .card_image img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ddd;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .card_image button {
+            padding: 8px 16px;
+            background-color: #fff;
+            border: 2px solid #25d366;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .card_content {
+            flex-grow: 1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .card_content .name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card_content div {
+            margin-bottom: 5px;
+        }
+        
+        @media screen and (min-width: 768px) {
+            main ul {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            main .main_title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                column-gap: 1rem;
+            }
+
+            main .main_title h2 {
+                font-size: 32px;
+            }
+
+            main .main_title span {
+                font-size: 20px;
+            }
+        }
+
+        @media screen and (min-width: 1024px) {
+            main ul {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            main ul li .card {
+                width: 420px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <ul id="friend_list"></ul>
+    </main>
+
+    <script>
+        async function getData() {
+            const data = await fetch('./data.json').then(res => res.json());
+            return data;
+        }
+
+        function convertToWhatsAppNumber(number) {
+            return "62" + number.substring(1);
+        }
+
+        async function friendListsElement() {
+            const friendLists = document.getElementById("friend_list");
+            const data = await getData();
+            const lists = data.map(i => {
+                const whatsappNumber = convertToWhatsAppNumber(i.no);
+                return `
+                    <li>
+                        <div class="card">
+                            <div class="card_image">
+                                <img src="${i.fotoselfie}" alt="${i.nama}">
+                                <a href="https://wa.me/${whatsappNumber}" target="_blank">
+                                    <button>
+                                        Hubungi
+                                    </button>
+                                </a>
+                            </div>
+                            <div class="card_content">
+                                <h2>${i.nama}</h2>
+                                <p>NIM: ${i.nim}</p>
+                                <p>TTL: ${i.ttl}</p>
+                                <p>Alamat: ${i.alamat}</p>
+                                <p>NoHP: ${i.no}</p>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            }).join("");
+
+            friendLists.innerHTML = lists;
+        }
+
+        friendListsElement();
+    </script>
+</body>
+</html>
